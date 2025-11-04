@@ -1,0 +1,11 @@
+# Ambiente virtual
+venv/
+__pycache__/
+
+# Arquivos de sistema
+.DS_Store
+*.log
+
+# Credenciais e chaves
+*.json
+*.env
