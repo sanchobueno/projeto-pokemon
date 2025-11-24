@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   postgres:
     image: postgres:15
@@ -13,6 +11,21 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: always
+
+  app:
+    build: .
+    container_name: pokemon_app
+    depends_on:
+      - postgres
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: /app/chave_teste_dev.json
+      POSTGRES_HOST: postgres
+      POSTGRES_DB: pokemon_db
+      POSTGRES_USER: pokemon_user
+      POSTGRES_PASSWORD: pokemon_pass
+    volumes:
+      - ./app:/app
+    command: ["python", "main.py"]
 
 volumes:
   postgres_data:
