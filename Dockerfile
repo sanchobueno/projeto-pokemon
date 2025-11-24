@@ -1,6 +1,9 @@
 # Imagem base oficial do Python
 FROM python:3.11-slim
 
+# Instala cron
+RUN apt-get update && apt-get install -y cron && apt-get clean
+
 # Define o diretório de trabalho dentro do container
 WORKDIR /app
 
@@ -13,5 +16,17 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copia todo o restante do projeto
 COPY app/ .
 
-# Define o comando padrão para rodar o main.py
-CMD ["python", "main.py"]
+# Copia o arquivo do crontab para dentro do container
+COPY cronjob /etc/cron.d/pokemon-cron
+
+# Dá permissão para o cronjob
+RUN chmod 0644 /etc/cron.d/pokemon-cron
+
+# Registra o cronjob
+RUN crontab /etc/cron.d/pokemon-cron
+
+# Cria o arquivo de log do cron
+RUN touch /var/log/cron.log
+
+# Comando para iniciar cron + rodar a aplicação
+CMD cron && tail -f /var/log/cron.log
